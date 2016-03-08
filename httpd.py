@@ -34,7 +34,7 @@ from xml.dom.minidom import parseString
 mimerender = mimerender.WebPyMimeRender()
 
 urls = (
-	'/(.*)', 'greet'
+	'/(.*)', 'rest'
 )
 
 class wsgiapp(web.application):
@@ -73,7 +73,7 @@ class renderer(object):
 	
 		return buffer
 
-class greet:
+class rest:
 	render_xml  = lambda **args: renderer.dict2xml(args)
 	render_json = lambda **args: renderer.dict2json(args)
 	render_html = lambda **args: '<!DOCTYPE html>\n<html>\n<body>\n' + \
