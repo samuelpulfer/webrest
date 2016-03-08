@@ -1,5 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+
+REST example with json/xml/txt and html output. The output is controlled 
+by the http Accept request header
+
+Example:
+curl -iH "Accept: application/json" localhost:8082/a/b/c
+curl -iH "Accept: text/xml" localhost:8082/a/b/c
+curl -iH "Accept: text/html" localhost:8082/a/b/c
+curl -iH "Accept: text/plain" localhost:8082/a/b/c
+
+if the Accept header is missing, json is the default.
+
+"""
 
 try:
 	import simplejson as json
@@ -7,7 +21,6 @@ except ImportError:
 	import json
 import sys, os
 
-#mimerender = mimerender.WebPyMimeRender()
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'web.py-0.37'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'mimerender-master', 'src'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'dicttoxml-1.6.6'))
@@ -35,16 +48,16 @@ class renderer(object):
 	def dict2xml(d):
 		return parseString(dicttoxml.dicttoxml(d, \
 		                   custom_root="root")).toprettyxml()
-
+	
 	@staticmethod
 	def dict2json(d):
 		return json.dumps(d)
-		
+	
 	@staticmethod
 	def dict2txt(d):
 		pp = pprint.PrettyPrinter(indent=4, width=1)
 		return pp.pformat(d)
-
+	
 	@staticmethod
 	def dict2html(d):
 		# FIXME: handle lists and tuples
@@ -66,12 +79,12 @@ class greet:
 	render_html = lambda **args: '<!DOCTYPE html>\n<html>\n<body>\n' + \
 	                             renderer.dict2html(args) + "\n</body>\n</html>"
 	render_txt  = lambda **args: renderer.dict2txt(args)
-
+	
 	@mimerender(
-		default = 'txt',
-		#html = render_html,
-		#json = render_json,
-		#xml  = render_xml,
+		default = 'json',
+		html = render_html,
+		json = render_json,
+		xml  = render_xml,
 		txt  = render_txt
 	)
 	
@@ -84,3 +97,4 @@ if __name__ == "__main__":
 	web.config.debug = True
 	app = wsgiapp(urls, globals())
 	app.run(port=8082)
+	
