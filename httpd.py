@@ -11,6 +11,9 @@ curl -iH "Accept: text/xml" localhost:8082/a/b/c
 curl -iH "Accept: text/html" localhost:8082/a/b/c
 curl -iH "Accept: text/plain" localhost:8082/a/b/c
 
+Using a different method:
+curl -XDELETE  -iH "Accept: text/xml" localhost:8082/a/b/c
+
 if the Accept header is missing, json is the default.
 
 """
@@ -22,6 +25,7 @@ except ImportError:
 import sys, os
 
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'web.py-0.37'))
+sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'python-mimeparse-1.5.1'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'mimerender-master', 'src'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'dicttoxml-1.6.6'))
 
@@ -88,7 +92,7 @@ class rest:
 		txt  = render_txt
 	)
 	
-	def GET(self, name):
+	def GET (self, name):
 		if not name: 
 			name = 'world'
 		return {'message': 'Hello, ' + name + '!', "sub": {"array": [1,2,3], "list": {"a": 1, "b": 2}}}
