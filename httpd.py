@@ -64,7 +64,6 @@ class renderer(object):
 	
 	@staticmethod
 	def dict2html(d):
-		# FIXME: handle lists and tuples
 		buffer = '<table border="1" style="border-collapse: collapse;"><tbody>'
 		for e in d:
 			buffer += "<tr><td>" + str(e) + "</td><td>"
@@ -86,16 +85,22 @@ class rest:
 	
 	@mimerender(
 		default = 'json',
-		html = render_html,
+		#html = render_html,
 		json = render_json,
 		xml  = render_xml,
 		txt  = render_txt
 	)
-	
 	def GET (self, name):
 		if not name: 
 			name = 'world'
-		return {'message': 'Hello, ' + name + '!', "sub": {"array": [1,2,3], "list": {"a": 1, "b": 2}}}
+		data = {
+			'message': 'Hello, ' + name + '!', 
+			"sub": {
+				"array": [1,2,3], 
+				"list": {"a": 1, "b": 2}
+			}
+		}
+		return data
 
 if __name__ == "__main__":
 	web.config.debug = True
