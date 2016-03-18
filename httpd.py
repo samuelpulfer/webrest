@@ -28,17 +28,19 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'web.py-0.37')
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'python-mimeparse-1.5.1'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'mimerender-master', 'src'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'lib', 'dicttoxml-1.6.6'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 
 import pprint
 import mimerender
 import web
 import dicttoxml
 from xml.dom.minidom import parseString
+import testinterface
 
 mimerender = mimerender.WebPyMimeRender()
 
 urls = (
-	'/(.*)', 'rest'
+	'/rest/(.*)', 'rest'
 )
 
 class wsgiapp(web.application):
