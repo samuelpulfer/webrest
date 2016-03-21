@@ -38,7 +38,8 @@ from xml.dom.minidom import parseString
 mimerender = mimerender.WebPyMimeRender()
 
 urls = (
-	'/(.*)', 'rest'
+	'/rest/(.*)', 'rest',
+	'/test', 'posttest'
 )
 
 class wsgiapp(web.application):
@@ -76,6 +77,46 @@ class renderer(object):
 	
 		return buffer
 
+class posttest:
+	def POST(self):
+		print web.data()
+		
+		return "It works!!!1!!1"
+	
+	def GET(self):
+		web.header("Content-type", "text/html")
+		return """
+		
+<script>
+function send_form() {
+	var r = new XMLHttpRequest();
+	r.open("POST", "/rest/aaaaaaaaa", true);
+	r.setRequestHeader("Content-Type","application/json; charset=utf-8");
+	r.onreadystatechange = function () {
+		if (r.readyState==4 && r.status==200) {
+			//console.log(data)
+			data = JSON.parse(r.responseText);
+			alert(data)
+			return
+		} else if (r.readystate == 4) {
+			alert("shit happened");
+		}
+	};
+	r.send(JSON.stringify(
+		{a: 1, b: 2, c: [0,1,2]}
+	));
+}
+</script>		
+		
+<form method="POST" action="/test">
+	<input type="text" name="aaaaa" value="asd fasfd adsf asdf asfd af" />
+	<button type="submit">hit me!</button>
+</form>
+
+<button type="button" onclick="send_form()">Send json</button>
+
+"""
+
 class rest:
 	render_xml  = lambda **args: renderer.dict2xml(args)
 	render_json = lambda **args: renderer.dict2json(args)
@@ -101,6 +142,15 @@ class rest:
 			}
 		}
 		return data
+		
+	@mimerender(
+		default = 'json',
+		json = render_json
+	)
+	def POST(self, name):
+		print json.loads(web.data())
+		pprint.pprint(web.data())
+		return json.loads(web.data())
 
 if __name__ == "__main__":
 	web.config.debug = True
